@@ -14,21 +14,21 @@ Date: 3 September 2017
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        var MQTT_Client_ID = "";
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <!-- Latest compiled and minified Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <!-- Include JQuery library from CDN -->
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
-            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+            <!-- Latest compiled and minified Bootstrap CSS -->
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+            <link rel="stylesheet" type="text/css" href="style.css">
+            <!-- Include JQuery library from CDN -->
+            <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <!-- Include Paho JavaScript MQTT Client from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
         var WebSocket_MQTT_Broker_URL = "ws://broker.hivemq.com:8000/mqtt";
-        var MQTT_Client_ID = "";
         var MQTT_Topic = "";
         var MQTT_Client = "";
         var MQTT_topic_root = "";
@@ -84,8 +84,6 @@ Date: 3 September 2017
             document.getElementById("room_3_temperature_spinbox").disabled = false;
             document.getElementById("room_3_temperature_send").disabled = false;
             MQTT_Client.subscribe("hwsb/room1/thermostat/temperature");
-            MQTT_Client.subscribe("hwsb/room2/thermostat/temperature");
-            MQTT_Client.subscribe("hwsb/room3/thermostat/temperature");
         }
 
         // Called when the client loses its connection
@@ -146,27 +144,41 @@ Date: 3 September 2017
             }
         }
 
-        function led(color, msg) {
-            var message = new Paho.MQTT.Message(msg);
-            message.destinationName = MQTT_topic_root + "led" + color;
-            if (color == 'green') {
-                rtt1 = (new Date()).getTime();
-                message.qos = 0;
+        // function led(color, msg) {
+        //     var message = new Paho.MQTT.Message(msg);
+        //     message.destinationName = MQTT_topic_root + "led" + color;
+        //     if (color == 'green') {
+        //         rtt1 = (new Date()).getTime();
+        //         message.qos = 0;
+        //     }
+        //     if (color == 'yellow') {
+        //         rtt2 = (new Date()).getTime();
+        //         message.qos = 1;
+        //     }
+        //     if (color == 'red') {
+        //         rtt3 = (new Date()).getTime();
+        //         message.qos = 2;
+        //     }
+        //     MQTT_Client.send(message);
+        //     console.log(
+        //         "MQTT message send: " + "\"" + message.payloadString + "\"" +
+        //         " MQTT topic: " + "\"" + message.destinationName + "\"" +
+        //         " QoS: " + "\"" + message.qos + "\"" +
+        //         " Retained: " + "\"" + message.retained + "\"");
+        // }
+
+        function send_setpoint(room_name, setpoint) {
+            if (setpoint < min_temp || setpoint > max_temp){
+                alert("value is invalid: " + setpoint);
             }
-            if (color == 'yellow') {
-                rtt2 = (new Date()).getTime();
-                message.qos = 1;
-            }
-            if (color == 'red') {
-                rtt3 = (new Date()).getTime();
-                message.qos = 2;
-            }
-            MQTT_Client.send(message);
-            console.log(
-                "MQTT message send: " + "\"" + message.payloadString + "\"" +
-                " MQTT topic: " + "\"" + message.destinationName + "\"" +
-                " QoS: " + "\"" + message.qos + "\"" +
-                " Retained: " + "\"" + message.retained + "\"");
+            var message = new Paho.MQTT.Message(setpoint);
+            message.destinationName = MQTT_topic_root + room_name + "\\";
+                MQTT_Client.send(message);
+                console.log(
+                    "MQTT message send: " + "\"" + message.payloadString + "\"" +
+                    " MQTT topic: " + "\"" + message.destinationName + "\"" +
+                    " QoS: " + "\"" + message.qos + "\"" +
+                    " Retained: " + "\"" + message.retained + "\"");
         }
     </script>
     <title>MQTT leds and sensors</title>
@@ -192,8 +204,10 @@ Date: 3 September 2017
             <label class="col-sm-2 control-label">Current Temp: </label>
             <p id="room_1_temperature_current">???</p>
             <label class="col-sm-2 control-label">setpoint Temp: </label>
-            <input disabled id="room_1_temperature_spinbox" type="number" min="10" max="20" step="2" value="16" required>
-            <input disabled id="room_1_temperature_send" type="submit" value="Submit setpoint">
+            <input disabled onclick='send_setpoint("room1");' id="room_1_temperature_spinbox" type="number" min="10" max="20" step="2" value="16" required>
+            <br>
+            <label class="col-sm-2 control-label">Button Status: </label>
+            <font id="room_1_button_status" size='6' color=0><b> O </b></font>
         </div>
         <hr>
         <div class="form-group">
@@ -203,6 +217,9 @@ Date: 3 September 2017
             <label  class="col-sm-2 control-label">setpoint Temp: </label>
             <input disabled id="room_2_temperature_spinbox" type="number" min="10" max="20" step="2" value="16" required>
             <input disabled id="room_2_temperature_send" type="submit" value="Submit setpoint">
+            <br>
+            <label class="col-sm-2 control-label">Button Status: </label>
+            <font id="room_2_button_status" size='6' color=0><b> O </b></font>
         </div>
         <hr>
         <div class="form-group">
@@ -212,6 +229,9 @@ Date: 3 September 2017
             <label class="col-sm-2 control-label">setpoint Temp: </label>
             <input disabled id="room_3_temperature_spinbox" type="number" min="10" max="20" step="2" value="16" required>
             <input disabled id="room_3_temperature_send" type="submit" value="Submit setpoint">
+            <br>
+            <label class="col-sm-2 control-label">Button Status: </label>
+            <font id="room_3_button_status" size='6' color=0><b> O </b></font>
         </div>
 
     </section>
@@ -219,7 +239,6 @@ Date: 3 September 2017
 </article>
 <footer>
     <h2>Home-West-Smart-Best</h2>
-</footer>
 </body>
 
 </html>
