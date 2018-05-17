@@ -1,4 +1,4 @@
-var WebSocket_MQTT_Broker_URL = "ws://broker.hivemq.com:8000/mqtt";
+var WebSocket_MQTT_Broker_URL = "ws://localhost:1883/ws";
 var MQTT_Client_ID = "";
 var MQTT_Topic = "";
 var MQTT_Client = "";
@@ -49,7 +49,8 @@ function onConnect() {
     console.log("Client ID: " + MQTT_Client_ID);
     document.getElementById("room_1_temperature_current").disabled = false;
     document.getElementById("room_1_temperature_spinbox").disabled = false;
-    MQTT_Client.subscribe("hwsb/+/thermostat/command");
+    
+    MQTT_Client.subscribe("hwsb/room1/thermostat/temperature");
 }
 
 // Called when the client loses its connection
@@ -69,14 +70,16 @@ function onMessageArrived(message) {
         " MQTT topic: " + "\"" + message.destinationName + "\"" +
         " QoS: " + "\"" + message.qos + "\"" +
         " Retained: " + "\"" + message.retained + "\"");
+
     if (message.destinationName === MQTT_topic_root + "/room1/buttonstatus/") {
         document.getElementById("room_1_button_status").style.color = "red";
     }
-    if (message.destinationName === MQTT_topic_root + "room1/thermostat/command") {
+
+    if (message.destinationName === (MQTT_topic_root + "/room1/thermostat/temperature")) {
         var jmessage = JSON.parse(message.payloadString);
 
-        if (jmessage.unit.celcius < 100 && jmessage.unit.celcius > -20) {
-            document.getElementById("room_1_temperature_current").innerHTML = jmessage.unit.celcius;
+        if (jmessage.unit.celsius < 100 && jmessage.unit.celsius > -20) {
+            document.getElementById("room_1_temperature_current").innerHTML = jmessage.unit.celsius;
         }
     }
 
@@ -106,10 +109,11 @@ function onMessageArrived(message) {
 // }
 
 function send_setpoint(room_name, setpoint) {
-    if (setpoint < temp_min || setpoint > temp_max) {
-        alert("value is invalid: " + setpoint);
+    var sp = parseInt(setpoint);
+    if (sp < temp_min || sp > temp_max) {
+        alert("value is invalid: " + sp);
     }
-    var message = new Paho.MQTT.Message("set_target_temperature " + JSON.stringify({"value" : setpoint}));
+    var message = new Paho.MQTT.Message("set_target_temperature " + JSON.stringify({"value" : sp}));
     message.destinationName = MQTT_topic_root + "/" + room_name + "/thermostat/command" ;
     message.retained = true;
     MQTT_Client.send(message);
