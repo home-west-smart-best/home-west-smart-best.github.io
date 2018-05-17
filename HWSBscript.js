@@ -49,7 +49,7 @@ function onConnect() {
     console.log("Client ID: " + MQTT_Client_ID);
     document.getElementById("room_1_temperature_current").disabled = false;
     document.getElementById("room_1_temperature_spinbox").disabled = false;
-    MQTT_Client.subscribe("hwsb/#");
+    MQTT_Client.subscribe("hwsb/+/thermostat/command");
 }
 
 // Called when the client loses its connection
@@ -72,9 +72,11 @@ function onMessageArrived(message) {
     if (message.destinationName === MQTT_topic_root + "/room1/buttonstatus/") {
         document.getElementById("room_1_button_status").style.color = "red";
     }
-    if (message.destinationName === MQTT_topic_root + "/room1/temperature/") {
-        if (message.payloadString < 100 && message.payloadString > -20) {
-            document.getElementById("room_1_temperature_current").innerHTML = message.payloadString;
+    if (message.destinationName === MQTT_topic_root + "room1/thermostat/command") {
+        var jmessage = JSON.parse(message.payloadString);
+
+        if (jmessage.unit.celcius < 100 && jmessage.unit.celcius > -20) {
+            document.getElementById("room_1_temperature_current").innerHTML = jmessage.unit.celcius;
         }
     }
 
@@ -107,8 +109,8 @@ function send_setpoint(room_name, setpoint) {
     if (setpoint < temp_min || setpoint > temp_max) {
         alert("value is invalid: " + setpoint);
     }
-    var message = new Paho.MQTT.Message(setpoint);
-    message.destinationName = MQTT_topic_root + "/" + room_name + "/temperature/" ;
+    var message = new Paho.MQTT.Message("set_target_temperature " + JSON.stringify({"value" : setpoint}));
+    message.destinationName = MQTT_topic_root + "/" + room_name + "/thermostat/command" ;
     message.retained = true;
     MQTT_Client.send(message);
     console.log(
