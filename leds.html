@@ -25,7 +25,7 @@ Date: 3 September 2017
    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 
    <script type="text/javascript">
-      var WebSocket_MQTT_Broker_URL = "";
+      var WebSocket_MQTT_Broker_URL = "ws://broker.hivemq.com:8000/mqtt";
       var MQTT_Client_ID = "";
       var MQTT_Topic = "";
       var MQTT_Client = "";
@@ -37,7 +37,7 @@ Date: 3 September 2017
       function initVars() {
          console.log("initVars");
          MQTT_device = "webapp";
-         MQTT_topic_root = "ESEiot/1718/WebApp";
+         MQTT_topic_root = "HWSB/#";
       }
 
       function mqtt_Connect_with_Broker() {
@@ -83,7 +83,7 @@ Date: 3 September 2017
          document.getElementById("button2off").disabled = false;
          document.getElementById("button3on").disabled = false;
          document.getElementById("button3off").disabled = false;
-         MQTT_Client.subscribe("ESEiot/1718/WebApp/#");
+         MQTT_Client.subscribe(MQTT_topic_root);
       }
 
       // Called when the client loses its connection

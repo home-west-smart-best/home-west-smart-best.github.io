@@ -1,95 +1,94 @@
-<!--
-Author: Jos Onokiewicz
-Date: 10th September 2017
--->
-
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
    <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
    <!-- Latest compiled and minified Bootstrap CSS -->
-   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-   <link rel="stylesheet" type="text/css" href="style.css">
-   <title>MQTT about</title>
+   <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"-->
+   <!--integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
+   <!--<link rel="stylesheet" type="text/css" href="style.css">-->
+   <!-- Include JQuery library from CDN -->
+   <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+           integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+   <!-- Include Paho JavaScript MQTT Client from CDN -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+   <style>
+      input[type="number"] {
+         width: 70px;
+      }
+   </style>
+
+   <title>Home-West-Smart-Best</title>
 </head>
+<body onload="initVars();">
+<article>
+   <nav class="navbar navbar-inverse visible-xs">
+      <div class="container-fluid">
+         <div class="navbar-header">0.
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+               <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Logo</a>
+         </div>
+         <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav">
+               <li class="active"><a href="#section1">Dashboard</a></li>
+               <li><a href="#section2">Contact</a></li>
+               <li><a href="#section3">Log</a></li>
+            </ul>
+         </div>
+      </div>
+   </nav>
 
-<body>
-   <article>
-      <header>
-         <h1>&nbsp; IoT MQTT</h1>
-         <ul class="nav nav-tabs">
-            <li class="active"><a href="index.html" target="_self">About</a></li>
-            <li><a href="leds.html" target="_blank2">Leds and sensors</a></li>
-            <li><a href="pubsub.html" target="_blank3">Pub Sub</a></li>
-            <li><a href="tbd.html" target="_blank4">TBD</a></li>
-         </ul>
-      </header>
-      <section id="about0" class="panel-body">
-         <p>
-            <h2>Responsive web page development</h2>
-            HTML5, CSS3, JavaScript and the Bootstrap framework are used for developing responsive web pages.<br><br>
-            <ul>
-               <li><a href="https://www.w3schools.com/html/default.asp" target="_blank">HTML5 tutorial</a></li>
-               <li><a href="https://www.w3schools.com/Js/" target="_blank">JavaScript tutorial</a></li>
-               <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a></li>
-            </ul>
-         </p>
-      </section>
-      <hr>
-      <section id="about1" class="panel-body">
-         <p>
-            <h2>MQTT: MQ Telemetry Transport</h2>
-            <a href="http://mqtt.org" target="_blank">MQTT</a> is a machine-to-machine (M2M) "Internet of Things" connectivity protocol. It was designed as an extremely lightweight publish/subscribe messaging transport.<br> It is useful for connections
-            with remote locations where a small code footprint is required and/or network bandwidth is at a premium. <br>
-            Near real time delivery of messages in an efficient, cost-effective way, even in unreliable networks, is where MQTT excels.<br><br>
-            <ul>
-               <li>Tutorial from HiveMQ: <a href="http://www.hivemq.com/blog/mqtt-essentials-wrap-up" target="_blank">MQTT essentials</a></li>
-               <li>C and C++ code libs: <a href="http://www.mosquitto.org" target="_blank">MQTT Mosquitto lib</a></li>
-            </ul>
-         </p>
-      </section>
-      <hr>
-      <section id="about2" class="panel-body">
-         <p>
-            <h2>Public MQTT brokers</h2>
-            Several MQTT brokers are publically available. They can be used in the other webpages. It is necessarry to connect them by the WebSocket protocol.<br>
-            The WebSocket protocol enables full-duplex interaction between a browser and a web server with lower overheads, facilitating (near) real-time data transfer.<br>
-            Eclipse Paho MQTT Javascript WebSockets implementation:
-            <a href="http://www.hivemq.com/blog/mqtt-client-library-encyclopedia-paho-js" target="_blank">Javascript MQTT library</a><br>
-            Always check if the correct port number is used. This web app does not use any encryption. Every MQTT cient using the same broker must use an unique identifier.<br>
-            Some example URLs:<br><br>
-            <ul>
-               <li style="font-family:'Courier New'">ws://broker.hivemq.com:8000/mqtt</li>
-               <li style="font-family:'Courier New'">ws://iot.eclipse.org:80/ws</li>
-            </ul>
-            Public brokers are not always up! Because MQTT is standardized we can easily choose another broker.<br>
-            Some example URLs for connecting to a local MQTT broker, using port 9001:<br><br>
-            <ul>
-               <li style="font-family:'Courier New'">ws://localhost:9001/ws</li>
-               <li style="font-family:'Courier New'">ws://127.0.0.1:9001/ws</li>
-               <li style="font-family:'Courier New'">ws://192.168.20.123:9001/ws</li>
-            </ul>
-         </p>
-      </section>
-      <hr>
-      <section id="about3" class="panel-body">
-         <p>
-            <h2>IoT blogs</h2>
-            <ul>
-               <li><a href="https://iotbytes.wordpress.com/" target="_blank">Pradeep Singh: IoT BYTES</a></li>
-               <li><a href="https://www.postscapes.com/top-100-thinkers-tracking-the-internet-of-things/" target="_blank">Top 100 IoT thinkers</a></li>
-            </ul>
-         </p>
-      </section>
-      <hr>
 
-      <footer>
-         <h2>Embedded Systems Engineering &nbsp;</h2>
-      </footer>
-   </article>
+   <div class="container-fluid">
+      <div class="row content">
+         <div class="col-sm-3 sidenav hidden-xs">
+            <h2>Home-West</h2>
+            <h2>Smart-Best</h2>
+            <ul class="nav nav-pills nav-stacked">
+               <li class="active"><a href="#section1">Dashboard</a></li>
+               <li><a href="#section2">Contact</a></li>
+               <li><a href="#section3">Log</a></li>
+            </ul>
+            <br>
+         </div>
+         <br>
+
+         <div class="col-sm-9">
+            <div class="well row">
+               <h4>Home-Dashboard</h4>
+               <p>Here you can watch the status of your house:</p>
+            </div>
+            <div class="row">
+               <div class="col-sm-4">
+                  <div class="well row">
+                     <h4 class="col-sm-8">Room 1</h4>
+                     <label class="col-sm-8" for="room_1_temperature_current">Current Temp: </label>
+                     <p class="col-sm-4" id="room_1_temperature_current">???</p>
+                     <label class="col-sm-8" for="room_1_temperature_spinbox">setpoint Temp: </label>
+                     <div class="col-sm-4">
+                        <input disabled class="form-control" onchange='send_setpoint("room1", this.value)' id="room_1_temperature_spinbox" type="number" min="0" max="40" step="2"
+                               value="16">
+                     </div>
+                     <label class="col-sm-8" for="room_1_button_status">Button Status: </label>
+                     <font class="col-sm-4" id="room_1_button_status" size='6' color=0><b> O </b></font>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+
+</article>
+
+<script type="text/javascript" src="HWSBscript.js"></script>
 </body>
 
 </html>
