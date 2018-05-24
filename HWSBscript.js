@@ -78,7 +78,7 @@ function onMessageArrived(message) {
     if (message.destinationName === (MQTT_topic_root + "/room1/thermostat/temperature")) {
         var jmessage = JSON.parse(message.payloadString);
 
-        if (jmessage.unit.celsius < 100 && jmessage.unit.celsius > -20) {
+        if (jmessage.unit.celsgitius < 100 && jmessage.unit.celsius > -20) {
             document.getElementById("room_1_temperature_current").innerHTML = jmessage.unit.celsius;
         }
     }
