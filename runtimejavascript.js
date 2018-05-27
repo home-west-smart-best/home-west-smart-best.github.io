@@ -89,7 +89,7 @@ class Room {
         }else if (button_status.includes("false")){
             $(".button_status_" + this.get_ID()).css('color' , 'red');
         } else{
-            $(".button_status_" + this.get_ID()).css('color' , 'black');
+            $(".button_status_" + this.get_ID()).css('color' , 'purple');
         }
     }
 }
@@ -100,7 +100,6 @@ function add_room(new_roomid){
 
     $('.rooms').append(r1.get_element());
     r1.enable_spinbox();
-    r1.set_button_status("false");
     room_list.push(r1);
 
 }
@@ -175,6 +174,7 @@ function onConnect() {
     MQTT_Client.subscribe("hwsb/+/thermostat/temperature");
     MQTT_Client.subscribe("hwsb/ping/#");
     MQTT_Client.subscribe("hwsb/disconnect");
+    MQTT_Client.subscribe("hwsb/+/switch/state");
 }
 
 // Called when the client loses its connection
@@ -195,9 +195,6 @@ function onMessageArrived(message) {
         " QoS: " + "\"" + message.qos + "\"" +
         " Retained: " + "\"" + message.retained + "\"");
 
-    if (message.destinationName === MQTT_topic_root + "/room1/buttonstatus/") {
-        document.getElementById("button_status").style.color = "red";
-    }
     if (message.destinationName.includes("/disconnect")) {
         var jmessage = JSON.parse(message.payloadString);
         delete_room(jmessage.id);
@@ -207,7 +204,17 @@ function onMessageArrived(message) {
 
         for(var i = 0; i < room_list.length; i++){
             if (jmessage.id === room_list[i].get_ID()){
-                room_list[i].set_temperature(jmessage.unit.celsius)
+                room_list[i].set_temperature(jmessage.unit.celsius);
+                return;
+            }
+        }
+    }
+    if (message.destinationName.includes("/switch/state")) {
+        var jmessage = JSON.parse(message.payloadString);
+
+        for(var i = 0; i < room_list.length; i++){
+            if (jmessage.id === room_list[i].get_ID()){
+                room_list[i].set_button_status(jmessage.state);
                 return;
             }
         }
