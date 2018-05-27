@@ -84,12 +84,12 @@ class Room {
     }
 
     set_button_status(button_status){
-        if (button_status.includes("true")) {
+        if (button_status === true) {
         $(".button_status_" + this.get_ID()).css('color' , 'green');
-        }else if (button_status.includes("false")){
+        }else if (button_status === false){
             $(".button_status_" + this.get_ID()).css('color' , 'red');
         } else{
-            $(".button_status_" + this.get_ID()).css('color' , 'purple');
+            $(".button_status_" + this.get_ID()).css('color' , 'white');
         }
     }
 }
