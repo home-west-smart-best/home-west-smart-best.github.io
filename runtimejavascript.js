@@ -77,7 +77,7 @@ function add_room(new_roomid){
 
     $('.rooms').append(r1.get_element());
     r1.enable_spinbox();
-    // room_list.push(r1);
+    room_list.push(r1);
 
 }
 
