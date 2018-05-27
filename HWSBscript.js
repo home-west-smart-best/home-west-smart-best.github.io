@@ -1,4 +1,4 @@
-var WebSocket_MQTT_Broker_URL = "ws://localhost:1883/ws";
+var WebSocket_MQTT_Broker_URL = "ws://broker.hivemq.com:8000/mqtt";
 var MQTT_Client_ID = "";
 var MQTT_Topic = "";
 var MQTT_Client = "";
@@ -9,7 +9,7 @@ var rtt3 = "??";
 const temp_max = 40;
 const temp_min = 0;
 
-$(document).ready(function () {
+$(document).ready(function () { 
 
     // Set variables
     //Generate Random MQTT Clinet ID
@@ -83,43 +83,4 @@ function onMessageArrived(message) {
         }
     }
 
-}
-
-// function led(color, msg) {
-//     var message = new Paho.MQTT.Message(msg);
-//     message.destinationName = MQTT_topic_root + "led" + color;
-//     if (color == 'green') {
-//         rtt1 = (new Date()).getTime();
-//         message.qos = 0;
-//     }
-//     if (color == 'yellow') {
-//         rtt2 = (new Date()).getTime();
-//         message.qos = 1;
-//     }
-//     if (color == 'red') {
-//         rtt3 = (new Date()).getTime();
-//         message.qos = 2;
-//     }
-//     MQTT_Client.send(message);
-//     console.log(
-//         "MQTT message send: " + "\"" + message.payloadString + "\"" +
-//         " MQTT topic: " + "\"" + message.destinationName + "\"" +
-//         " QoS: " + "\"" + message.qos + "\"" +
-//         " Retained: " + "\"" + message.retained + "\"");
-// }
-
-function send_setpoint(room_name, setpoint) {
-    var sp = parseInt(setpoint);
-    if (sp < temp_min || sp > temp_max) {
-        alert("value is invalid: " + sp);
-    }
-    var message = new Paho.MQTT.Message("set_target_temperature " + JSON.stringify({"value" : sp}));
-    message.destinationName = MQTT_topic_root + "/" + room_name + "/thermostat/command" ;
-    message.retained = true;
-    MQTT_Client.send(message);
-    console.log(
-        "MQTT message send: " + "\"" + message.payloadString + "\"" +
-        " MQTT topic: " + "\"" + message.destinationName + "\"" +
-        " QoS: " + "\"" + message.qos + "\"" +
-        " Retained: " + "\"" + message.retained + "\"");
 }
