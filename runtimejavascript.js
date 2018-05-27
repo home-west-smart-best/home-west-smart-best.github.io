@@ -66,9 +66,32 @@ class Room {
     }
 
     set_temperature(current_temperature){
-
+        $(".temperature_current_" + this.get_ID()).text(current_temperature);
+        this.temperature_color(current_temperature);
     }
 
+    temperature_color(){
+        var current_temperature = parseInt($(".temperature_spinbox_" + this.get_ID()).val());
+        var set_temperature = parseInt($(".temperature_current_" + this.get_ID()).text());
+        
+        if( current_temperature > set_temperature){
+            $(".temperature_current_" + this.get_ID()).css('color' , 'red');
+        } else if ( current_temperature < set_temperature){
+            $(".temperature_current_" + this.get_ID()).css('color' , 'blue');
+        } else{
+            $(".temperature_current_" + this.get_ID()).css('color' , 'green');
+        }
+    }
+
+    set_button_status(button_status){
+        if (button_status.includes("true")) {
+        $(".button_status_" + this.get_ID()).css('color' , 'green');
+        }else if (button_status.includes("false")){
+            $(".button_status_" + this.get_ID()).css('color' , 'red');
+        } else{
+            $(".button_status_" + this.get_ID()).css('color' , 'black');
+        }
+    }
 }
 
 function add_room(new_roomid){
@@ -77,8 +100,23 @@ function add_room(new_roomid){
 
     $('.rooms').append(r1.get_element());
     r1.enable_spinbox();
+    r1.set_button_status("false");
     room_list.push(r1);
 
+}
+
+function delete_room(delete_roomid){
+    for(var i = 0; i < room_list.length; i++) {
+        if (delete_roomid === room_list[i].get_ID()) {
+            room_list.splice(i, 1);
+            $('.rooms').empty();
+            for(var ii = 0; i < room_list.length; i++){
+                $('.rooms').append(room_list[ii].get_element());
+                room_list[ii].enable_spinbox();
+            }
+            return;
+        }
+    }
 }
 
 function send_setpoint(room_name, setpoint) {
@@ -134,14 +172,9 @@ function onConnect() {
     // Once a connection has been made, make a subscription.
     console.log("Connected to " + WebSocket_MQTT_Broker_URL);
     console.log("Client ID: " + MQTT_Client_ID);
-
     MQTT_Client.subscribe("hwsb/+/thermostat/temperature");
     MQTT_Client.subscribe("hwsb/ping/#");
-
-    
-    $(".temperature_current").prop('disabled',false);
-    $(".temperature_spinbox").prop('disabled',false);
-    add_room(8051);
+    MQTT_Client.subscribe("hwsb/disconnect");
 }
 
 // Called when the client loses its connection
@@ -151,7 +184,6 @@ function onConnectionLost(responseObject) {
             "\"" + responseObject.errorMessage + "\"");
             $(".temperature_current").prop('disabled',true);
             $(".temperature_spinbox").prop('disabled',true);
-        
     }
 }
 
@@ -166,12 +198,18 @@ function onMessageArrived(message) {
     if (message.destinationName === MQTT_topic_root + "/room1/buttonstatus/") {
         document.getElementById("button_status").style.color = "red";
     }
-
-    if (message.destinationName === (MQTT_topic_root + "/room1/thermostat/temperature")) {
+    if (message.destinationName.includes("/disconnect")) {
+        var jmessage = JSON.parse(message.payloadString);
+        delete_room(jmessage.id);
+    }
+    if (message.destinationName.includes("/thermostat/temperature")) {
         var jmessage = JSON.parse(message.payloadString);
 
-        if (jmessage.unit.celsgitius < 100 && jmessage.unit.celsius > -20) {
-            document.getElementById("temperature_current").innerHTML = jmessage.unit.celsius;
+        for(var i = 0; i < room_list.length; i++){
+            if (jmessage.id === room_list[i].get_ID()){
+                room_list[i].set_temperature(jmessage.unit.celsius)
+                return;
+            }
         }
     }
     if (message.destinationName.includes("/ping/")) {
@@ -187,11 +225,6 @@ function onMessageArrived(message) {
     }
 }
 
-function createNewRoom(name) {
-    this.name = name;
-
-
-}
 
 // function led(color, msg) {
 //     var message = new Paho.MQTT.Message(msg);

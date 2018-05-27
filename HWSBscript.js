@@ -50,7 +50,7 @@ function onConnect() {
     document.getElementById("room_1_temperature_current").disabled = false;
     document.getElementById("room_1_temperature_spinbox").disabled = false;
     
-    MQTT_Client.subscribe("hwsb/room1/thermostat/temperature");
+    MQTT_Client.subscribe("hwsb/#");
 }
 
 // Called when the client loses its connection
